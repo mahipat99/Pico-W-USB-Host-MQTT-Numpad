@@ -63,14 +63,15 @@ Add more tutorials on how to connect to home assistant
 
 // # tag::user-defined-settings[]
 //Wi-Fi Settings
-char ssid[] = "{ssid}"; // <1>
-char password[] = "{password}"; // <2>
+char ssid[] = "OpenWRT"; // <1>
+char password[] = "12349999"; // <2>
 //MQTT Settings
-char* MQTTServer = "{mqtt-IPv4-address}"; // <3>
+const char* MQTTServer = "192.168.1.151"; // <3>
 int MQTTPort = 1883; // <4>
-char* MQTTUser = "{mqtt-username}"; // <5>
-char* MQTTPassword = "{mqtt-password}"; // Need to escape / <6>
-char* MQTTSubTopic1 = "placeholder"; // <7>
+const char* MQTTUser = "{mqtt-username}"; // <5>
+const char* MQTTPassword = "{mqtt-password}"; // Need to escape / <6>
+const char* MQTTSubTopic1 = "placeholder"; // <7>
+
 long MQTTLastPublishTime;
 long MQTTPublishInterval = 10000;
 bool numlock = false; //  Need to track numlock state
@@ -192,13 +193,15 @@ void MQTTConnect() {
     String MQTTClientid_str = "Pico_W" + WiFi.macAddress();  
     MQTTClientid_str.replace(":","_"); // No colons allowed in mqtt
     
-    if (MQTTClient.connect(MQTTClientid_str.c_str(), MQTTUser, MQTTPassword)) {
-      //連結成功，顯示「已連線」。
+    //if (MQTTClient.connect(MQTTClientid_str.c_str(), MQTTUser, MQTTPassword)) {
+    if (MQTTClient.connect(MQTTClientid_str.c_str())) {
+
+      //The connection is successful and "Connected" is displayed.
       Serial2.println("MQTT Connected");
-      //訂閱SubTopic1主題
+      //Subscribe to SubTopic1 topic
       MQTTClient.subscribe(MQTTSubTopic1);
     } else {
-      //若連線不成功，則顯示錯誤訊息，並重新連線
+      //If the connection is unsuccessful, an error message will be displayed and the connection will be reconnected.
       Serial2.print("MQTT connection failed,status code=");
       Serial2.println(MQTTClient.state());
       Serial2.println("Trying to reconnect in five seconds...");
@@ -207,18 +210,18 @@ void MQTTConnect() {
   }
 }
 
-//接收到訂閱時
+//When a subscription is received
 void MQTTCallback(char* topic, byte* payload, unsigned int length) {
-  Serial2.print(topic); Serial2.print("訂閱通知:");
-  String payloadString;//將接收的payload轉成字串
-  //顯示訂閱內容
+  Serial2.print(topic); Serial2.print("Subscribe to notifications:");
+  String payloadString;//Convert the received payload into a string
+  //Show subscription content
   for (int i = 0; i < length; i++) {
     payloadString = payloadString + (char)payload[i];
   }
   Serial2.println(payloadString);
-  //比對主題是否為訂閱主題1
+  //Check whether the topic is subscription topic 1
   if (strcmp(topic, MQTTSubTopic1) == 0) {
-    Serial2.println("改變燈號：" + payloadString);
+    Serial2.println("change light signal：" + payloadString);
   }
 }
 
