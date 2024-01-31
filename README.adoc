@@ -450,3 +450,6 @@ HisashiKato attached the code _{project-name}_ as a .zip file, with implementati
 
 == Acknowledgements
 Thank you very much to HisashiKato, David Zhang, Max Cheng, Ha Thach, and the countless others who contributed to the projects which made this possible.
+
+== Credit
+Credit to the original author https://gitlab.com/baiyibai/pico-w-usb-host-mqtt-numpad[baiyibai]
